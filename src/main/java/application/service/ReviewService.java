@@ -4,6 +4,7 @@ import application.dto.OpretReviewRequestDto;
 import application.dto.OpretReviewResponseDto;
 import application.dto.ResponseDto;
 import application.entity.Review;
+import application.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,15 +16,10 @@ import java.util.UUID;
 public class ReviewService {
 
     private final BogService bogService;
+    private final ReviewRepository reviewRepository;
 
-    public String get(String bookId) {
-        if (bookId == null) {
-            return "Invalid ID!";
-        }
-        if (bookId.equals("The Dark Tower")) {
-            return "A great book";
-        }
-        return "I don't know that book, sorry";
+    public Optional<Review> hent(String reviewId) {
+        return reviewRepository.findById(reviewId);
     }
 
     public OpretReviewResponseDto opret(OpretReviewRequestDto requestDto) {
@@ -33,7 +29,6 @@ public class ReviewService {
         if (fejlFundet.isPresent()) {
             return fejlFundet.get();
         }
-
 
         Review review = opretReview(requestDto);
 
@@ -50,7 +45,7 @@ public class ReviewService {
         if (requestDto.getScore() > 5) {
             return fejlUgyldigScore("Score må højest være 0");
         }
-        if (bogService.findBogById(requestDto.getBogId()) == null) {
+        if (!bogService.findBogById(requestDto.getBogId()).isPresent()) {
             return fejlUkendtBog(requestDto.getBogId());
         }
 
@@ -78,12 +73,12 @@ public class ReviewService {
     }
 
     private Review opretReview(OpretReviewRequestDto requestDto) {
-        return Review.builder()
+        return reviewRepository.save(Review.builder()
                 .id(UUID. randomUUID().toString())
-                .reviewAuthor(requestDto.getReviewForfatter())
+                .reviewForfatter(requestDto.getReviewForfatter())
                 .score(requestDto.getScore())
-                .description(requestDto.getBeskrivelse())
+                .beskrivelse(requestDto.getBeskrivelse())
                 .bog(bogService.findBogById(requestDto.getBogId()).orElse(null))
-                .build();
+                .build());
     }
 }

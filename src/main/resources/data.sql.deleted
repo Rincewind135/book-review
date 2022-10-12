@@ -1,0 +1,11 @@
+-- CREATE SCHEMA review;
+
+-- CREATE table review.bog (
+--     id varchar(36),
+--     titel varchar(255),
+--     forfatter varchar(255),
+--     blurb varchar(255)
+-- );
+--
+-- INSERT INTO review.bog (id, titel, forfatter, blurb)
+-- VALUES ('497e2f41-a231-47df-862e-287bfbfa0b4e', 'The Dark Tower', 'Stephen Kind', 'A great book');

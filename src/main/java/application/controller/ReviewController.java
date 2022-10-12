@@ -26,7 +26,7 @@ public class ReviewController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/hent")
 	public String hent() {
-		return reviewService.get("The Dark Tower");
+		return "The Dark Tower";
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/welcome")

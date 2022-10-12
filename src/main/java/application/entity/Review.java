@@ -24,9 +24,9 @@ public class Review {
     @Column(name = "score", nullable = false)
     private int score;
 
-    @Column(name = "description", nullable = false)
-    private String description;
+    @Column(name = "beskrivelse", nullable = false)
+    private String beskrivelse;
 
-    @Column(name = "reviewAuthor", nullable = false)
-    private String reviewAuthor;
+    @Column(name = "reviewForfatter", nullable = false)
+    private String reviewForfatter;
 }

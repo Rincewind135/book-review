@@ -17,8 +17,7 @@ import java.util.Optional;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 class BogServiceTest {
@@ -27,7 +26,6 @@ class BogServiceTest {
     @Mock
     private BogRepository bogRepository;
 
-    private OpretBogResponseDto result;
     private OpretBogRequestDto request;
 
     @BeforeEach
@@ -40,13 +38,12 @@ class BogServiceTest {
                 .blurb("A good book")
                 .build();
 
-        when(bogRepository.save(any())).thenReturn(Optional.empty());
-
+        when(bogRepository.save(any())).thenAnswer(invocationOnMock -> invocationOnMock.getArguments()[0]);
         bogService = new BogService(bogRepository);
     }
 
     @Test
-    void sunshine() {
+    void solskin() {
         // Arrange
 
         // Act
@@ -54,7 +51,6 @@ class BogServiceTest {
 
         // Assert
         assertResponseOK(result);
-//        verify(bogRepository.save(any()));
         Bog bogSaved = getSavedBog();
         assertEquals(result.getBogId(), bogSaved.getId());
         assertEquals(request.getTitel(), bogSaved.getTitel());
@@ -62,11 +58,24 @@ class BogServiceTest {
         assertEquals(request.getBlurb(), bogSaved.getBlurb());
     }
 
+    @Test
+    void bogEksistererAllerede() {
+        // Arrange
+        when(bogRepository.findBogByTitel(request.getTitel()))
+                .thenReturn(Optional.of(Bog.builder().build()));
+
+        // Act
+        OpretBogResponseDto result = bogService.opret(request);
+
+        // Assert
+        assertResponseFEJL(result, OpretBogResponseDto.StatusSubKode.BOG_FINDES_ALLEREDE);
+        verify(bogRepository, times(0)).save(any());
+    }
+
     private Bog getSavedBog() {
         ArgumentCaptor<Bog> bogCaptor = ArgumentCaptor.forClass(Bog.class);
         verify(bogRepository).save(bogCaptor.capture());
-        Bog bogSaved = bogCaptor.getValue();
-        return bogSaved;
+        return bogCaptor.getValue();
     }
 
     private void assertResponseOK(OpretBogResponseDto result) {
@@ -74,5 +83,13 @@ class BogServiceTest {
         assertEquals(ResponseDto.StatusKode.OK, result.getStatusKode());
         assertNull(result.getStatusSubKode());
         assertNotNull(result.getBogId());
+    }
+
+    private void assertResponseFEJL(OpretBogResponseDto result, OpretBogResponseDto.StatusSubKode subKode) {
+        assertNotNull(result);
+        assertEquals(ResponseDto.StatusKode.FEJL, result.getStatusKode());
+        assertEquals(subKode, result.getStatusSubKode());
+        assertNotNull(result.getFejlBeskrivelse());
+        assertNull(result.getBogId());
     }
 }
