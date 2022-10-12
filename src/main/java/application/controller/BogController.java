@@ -1,8 +1,11 @@
 package application.controller;
 
+import application.dto.HentBogRequestDto;
+import application.dto.HentBogResponseDto;
 import application.dto.OpretBogRequestDto;
 import application.dto.OpretBogResponseDto;
-import application.service.BogService;
+import application.service.BogReaderService;
+import application.service.BogWriterService;
 import io.swagger.annotations.SwaggerDefinition;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,15 +20,16 @@ public class BogController {
 
 	// URL: http://localhost:8080/swagger-ui/
 
-	private final BogService bogService;
+	private final BogReaderService bogReaderService;
+	private final BogWriterService bogWriterService;
 
 	@RequestMapping(method = RequestMethod.POST, value = "/opret")
 	public OpretBogResponseDto opret(OpretBogRequestDto requestDto) {
-		return bogService.opret(requestDto);
+		return bogWriterService.opret(requestDto);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/hent")
-	public String hent() {
-		return bogService.findBogById(null).get().getTitel();
+	public HentBogResponseDto hent(HentBogRequestDto requestDto) {
+		return bogReaderService.hent(requestDto);
 	}
 }

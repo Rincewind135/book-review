@@ -4,7 +4,7 @@ server:
 local:
   server:
     port: 8080
-#TODO: figure out why I need this here and in bootstrap.yml
+
 spring:
   application:
     name: bookreviewservice
@@ -15,7 +15,6 @@ spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     url: jdbc:h2:mem:test
-    data: classpath:data.sql
     hikari:
       minimum-idle: 1
       maximum-pool-size: 20
@@ -29,6 +28,9 @@ spring:
     show-sql: false
     hibernate:
       ddl-auto: create
+    properties:
+      hibernate:
+        globally_quoted_identifiers: true
   jackson:
     serialization:
       write-dates-as-timestamps: false

@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(catalog = "review", name = "bog")
+@Table(name = "bog")
 @Builder
 @Getter
 @Setter

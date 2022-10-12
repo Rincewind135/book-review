@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface BogRepository extends JpaRepository<Bog, String> { //}, QuerydslPredicateExecutor<Bog> {
+public interface BogRepository extends JpaRepository<Bog, String> {
 
     Optional<Bog> findBogByTitel(String titel);
 

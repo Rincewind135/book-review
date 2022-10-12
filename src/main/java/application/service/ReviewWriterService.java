@@ -4,6 +4,7 @@ import application.dto.OpretReviewRequestDto;
 import application.dto.OpretReviewResponseDto;
 import application.dto.ResponseDto;
 import application.entity.Review;
+import application.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,19 +13,10 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class ReviewService {
+public class ReviewWriterService {
 
-    private final BogService bogService;
-
-    public String get(String bookId) {
-        if (bookId == null) {
-            return "Invalid ID!";
-        }
-        if (bookId.equals("The Dark Tower")) {
-            return "A great book";
-        }
-        return "I don't know that book, sorry";
-    }
+    private final BogReaderService bogReaderService;
+    private final ReviewRepository reviewRepository;
 
     public OpretReviewResponseDto opret(OpretReviewRequestDto requestDto) {
 
@@ -33,7 +25,6 @@ public class ReviewService {
         if (fejlFundet.isPresent()) {
             return fejlFundet.get();
         }
-
 
         Review review = opretReview(requestDto);
 
@@ -50,7 +41,7 @@ public class ReviewService {
         if (requestDto.getScore() > 5) {
             return fejlUgyldigScore("Score må højest være 0");
         }
-        if (bogService.findBogById(requestDto.getBogId()) == null) {
+        if (!bogReaderService.findBogById(requestDto.getBogId()).isPresent()) {
             return fejlUkendtBog(requestDto.getBogId());
         }
 
@@ -78,12 +69,12 @@ public class ReviewService {
     }
 
     private Review opretReview(OpretReviewRequestDto requestDto) {
-        return Review.builder()
+        return reviewRepository.save(Review.builder()
                 .id(UUID. randomUUID().toString())
-                .reviewAuthor(requestDto.getReviewForfatter())
+                .reviewForfatter(requestDto.getReviewForfatter())
                 .score(requestDto.getScore())
-                .description(requestDto.getBeskrivelse())
-                .bog(bogService.findBogById(requestDto.getBogId()).orElse(null))
-                .build();
+                .beskrivelse(requestDto.getBeskrivelse())
+                .bog(bogReaderService.findBogById(requestDto.getBogId()).orElse(null))
+                .build());
     }
 }
