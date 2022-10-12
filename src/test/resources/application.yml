@@ -1,0 +1,45 @@
+server:
+  port: 8080
+
+local:
+  server:
+    port: 8080
+#TODO: figure out why I need this here and in bootstrap.yml
+spring:
+  application:
+    name: bookreviewservice
+  main:
+    allow-bean-definition-overriding: true
+    web-application-type: none
+
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:h2:mem:test
+    data: classpath:data.sql
+    hikari:
+      minimum-idle: 1
+      maximum-pool-size: 20
+      connection-test-query: SELECT 1
+      max-lifetime: 300000
+    initialization-mode: always
+    continue-on-error: false
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: false
+    hibernate:
+      ddl-auto: create
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+
+ribbon:
+  ServerListRefreshInterval: 1000
+
+endpoints:
+  health:
+    sensitive: false
+  restart:
+    enabled: true
+  shutdown:
+    enabled: true
