@@ -26,7 +26,7 @@ class ReviewServiceTest {
     @Mock
     private ReviewRepository reviewRepository;
     @Mock
-    private BogService bogService;
+    private BogReaderService bogReaderService;
 
     private OpretReviewRequestDto request;
 
@@ -41,9 +41,9 @@ class ReviewServiceTest {
                 .score(4)
                 .build();
 
-        when(bogService.findBogById(request.getBogId())).thenReturn(Optional.of(Bog.builder().id(request.getBogId()).build()));
+        when(bogReaderService.findBogById(request.getBogId())).thenReturn(Optional.of(Bog.builder().id(request.getBogId()).build()));
         when(reviewRepository.save(any())).thenAnswer(invocationOnMock -> invocationOnMock.getArguments()[0]);
-        reviewService = new ReviewService(bogService, reviewRepository);
+        reviewService = new ReviewService(bogReaderService, reviewRepository);
     }
 
     @Test
@@ -67,7 +67,7 @@ class ReviewServiceTest {
     @Test
     void bogFindesIkke() {
         // Arrange
-        when(bogService.findBogById(request.getBogId()))
+        when(bogReaderService.findBogById(request.getBogId()))
                 .thenReturn(Optional.empty());
 
         // Act

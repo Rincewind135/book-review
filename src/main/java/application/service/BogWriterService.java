@@ -1,8 +1,6 @@
 package application.service;
 
-import application.dto.OpretBogRequestDto;
-import application.dto.OpretBogResponseDto;
-import application.dto.ResponseDto;
+import application.dto.*;
 import application.entity.Bog;
 import application.repository.BogRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,17 +11,10 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class BogService {
+public class BogWriterService {
 
     private final BogRepository bogRepository;
-
-    public Optional<Bog> findBogByTitel(String titel) {
-        return bogRepository.findBogByTitel(titel);
-    }
-
-    public Optional<Bog> findBogById(String id) {
-        return bogRepository.findBogById(id);
-    }
+    private final BogReaderService bogReaderService;
 
     public OpretBogResponseDto opret(OpretBogRequestDto requestDto) {
 
@@ -33,9 +24,11 @@ public class BogService {
             return fejlFundet.get();
         }
 
-
         Bog bog = opretBog(requestDto);
+        return bogErOprettetOkay(bog);
+    }
 
+    private static OpretBogResponseDto bogErOprettetOkay(Bog bog) {
         return OpretBogResponseDto.builder()
                 .bogId(bog.getId())
                 .statusKode(ResponseDto.StatusKode.OK)
@@ -43,7 +36,7 @@ public class BogService {
     }
 
     private Optional<OpretBogResponseDto> validerInput(OpretBogRequestDto requestDto) {
-        if (findBogByTitel(requestDto.getTitel()).isPresent()) {
+        if (bogReaderService.findBogByTitel(requestDto.getTitel()).isPresent()) {
             return fejlBogFindesAllerede(requestDto.getTitel());
         }
 

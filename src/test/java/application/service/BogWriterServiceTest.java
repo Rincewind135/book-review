@@ -20,11 +20,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-class BogServiceTest {
+class BogWriterServiceTest {
 
-    private BogService bogService;
+    private BogWriterService bogWriterService;
     @Mock
     private BogRepository bogRepository;
+    @Mock
+    private BogReaderService bogReaderService;
 
     private OpretBogRequestDto request;
 
@@ -39,7 +41,7 @@ class BogServiceTest {
                 .build();
 
         when(bogRepository.save(any())).thenAnswer(invocationOnMock -> invocationOnMock.getArguments()[0]);
-        bogService = new BogService(bogRepository);
+        bogWriterService = new BogWriterService(bogRepository, bogReaderService);
     }
 
     @Test
@@ -47,7 +49,7 @@ class BogServiceTest {
         // Arrange
 
         // Act
-        OpretBogResponseDto result = bogService.opret(request);
+        OpretBogResponseDto result = bogWriterService.opret(request);
 
         // Assert
         assertResponseOK(result);
@@ -61,11 +63,11 @@ class BogServiceTest {
     @Test
     void bogEksistererAllerede() {
         // Arrange
-        when(bogRepository.findBogByTitel(request.getTitel()))
+        when(bogReaderService.findBogByTitel(request.getTitel()))
                 .thenReturn(Optional.of(Bog.builder().build()));
 
         // Act
-        OpretBogResponseDto result = bogService.opret(request);
+        OpretBogResponseDto result = bogWriterService.opret(request);
 
         // Assert
         assertResponseFEJL(result, OpretBogResponseDto.StatusSubKode.BOG_FINDES_ALLEREDE);

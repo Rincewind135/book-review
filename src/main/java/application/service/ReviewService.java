@@ -15,7 +15,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ReviewService {
 
-    private final BogService bogService;
+    private final BogReaderService bogReaderService;
     private final ReviewRepository reviewRepository;
 
     public Optional<Review> hent(String reviewId) {
@@ -45,7 +45,7 @@ public class ReviewService {
         if (requestDto.getScore() > 5) {
             return fejlUgyldigScore("Score må højest være 0");
         }
-        if (!bogService.findBogById(requestDto.getBogId()).isPresent()) {
+        if (!bogReaderService.findBogById(requestDto.getBogId()).isPresent()) {
             return fejlUkendtBog(requestDto.getBogId());
         }
 
@@ -78,7 +78,7 @@ public class ReviewService {
                 .reviewForfatter(requestDto.getReviewForfatter())
                 .score(requestDto.getScore())
                 .beskrivelse(requestDto.getBeskrivelse())
-                .bog(bogService.findBogById(requestDto.getBogId()).orElse(null))
+                .bog(bogReaderService.findBogById(requestDto.getBogId()).orElse(null))
                 .build());
     }
 }
