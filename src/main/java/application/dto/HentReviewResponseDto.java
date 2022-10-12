@@ -25,7 +25,6 @@ public class HentReviewResponseDto extends ResponseDto {
     }
 
     public enum StatusSubKode {
-        UKENDT_BOG
-        ,UGYLDIG_SCORE
+        UKENDT_REVIEW
     }
 }

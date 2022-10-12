@@ -13,16 +13,14 @@ import org.mockito.MockitoAnnotations;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.verify;
 
-class ReviewServiceTest {
+class ReviewWriterServiceTest {
 
-    private ReviewService reviewService;
+    private ReviewWriterService reviewWriterService;
     @Mock
     private ReviewRepository reviewRepository;
     @Mock
@@ -43,7 +41,7 @@ class ReviewServiceTest {
 
         when(bogReaderService.findBogById(request.getBogId())).thenReturn(Optional.of(Bog.builder().id(request.getBogId()).build()));
         when(reviewRepository.save(any())).thenAnswer(invocationOnMock -> invocationOnMock.getArguments()[0]);
-        reviewService = new ReviewService(bogReaderService, reviewRepository);
+        reviewWriterService = new ReviewWriterService(bogReaderService, reviewRepository);
     }
 
     @Test
@@ -51,7 +49,7 @@ class ReviewServiceTest {
         // Arrange
 
         // Act
-        OpretReviewResponseDto result = reviewService.opret(request);
+        OpretReviewResponseDto result = reviewWriterService.opret(request);
 
         // Assert
         assertResponseOK(result);
@@ -71,7 +69,7 @@ class ReviewServiceTest {
                 .thenReturn(Optional.empty());
 
         // Act
-        OpretReviewResponseDto result = reviewService.opret(request);
+        OpretReviewResponseDto result = reviewWriterService.opret(request);
 
         // Assert
         assertResponseFEJL(result, OpretReviewResponseDto.StatusSubKode.UKENDT_BOG);
@@ -84,7 +82,7 @@ class ReviewServiceTest {
         request.setScore(-1);
 
         // Act
-        OpretReviewResponseDto result = reviewService.opret(request);
+        OpretReviewResponseDto result = reviewWriterService.opret(request);
 
         // Assert
         assertResponseFEJL(result, OpretReviewResponseDto.StatusSubKode.UGYLDIG_SCORE);
@@ -97,7 +95,7 @@ class ReviewServiceTest {
         request.setScore(6);
 
         // Act
-        OpretReviewResponseDto result = reviewService.opret(request);
+        OpretReviewResponseDto result = reviewWriterService.opret(request);
 
         // Assert
         assertResponseFEJL(result, OpretReviewResponseDto.StatusSubKode.UGYLDIG_SCORE);

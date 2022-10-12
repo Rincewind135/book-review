@@ -13,14 +13,10 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class ReviewService {
+public class ReviewWriterService {
 
     private final BogReaderService bogReaderService;
     private final ReviewRepository reviewRepository;
-
-    public Optional<Review> hent(String reviewId) {
-        return reviewRepository.findById(reviewId);
-    }
 
     public OpretReviewResponseDto opret(OpretReviewRequestDto requestDto) {
 
