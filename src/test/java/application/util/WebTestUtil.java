@@ -23,25 +23,25 @@ public class WebTestUtil {
 
     public static ResultActions kaldOpretBogEndpoint(MockMvc mockMvc, OpretBogRequestDto requestDto) throws Exception {
         return mockMvc.perform(post("/bog/opret")
-                        .contentType("application/json")
-                        .content(asJsonString(requestDto)));
+                .contentType("application/json")
+                .content(asJsonString(requestDto)));
     }
 
     public static ResultActions kaldHentBogEndpoint(MockMvc mockMvc, HentBogRequestDto requestDto) throws Exception {
         return mockMvc.perform(get("/bog/hent")
-                        .contentType("application/json")
-                        .content(asJsonString(requestDto)));
+                .contentType("application/json")
+                .content(asJsonString(requestDto)));
     }
 
     public static ResultActions kaldOpretReviewEndpoint(MockMvc mockMvc, OpretReviewRequestDto requestDto) throws Exception {
         return mockMvc.perform(post("/review/opret")
-                        .contentType("application/json")
-                        .content(asJsonString(requestDto)));
+                .contentType("application/json")
+                .content(asJsonString(requestDto)));
     }
 
     public static ResultActions kaldHentReviewEndpoint(MockMvc mockMvc, HentReviewRequestDto requestDto) throws Exception {
         return mockMvc.perform(get("/review/hent")
-                        .contentType("application/json")
-                        .content(asJsonString(requestDto)));
+                .contentType("application/json")
+                .content(asJsonString(requestDto)));
     }
 }
