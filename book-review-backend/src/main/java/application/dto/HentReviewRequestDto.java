@@ -7,14 +7,18 @@ import javax.validation.constraints.Size;
 
 @Getter
 @Setter
-public class HentReviewRequestDto extends RequestDto {
+public class HentReviewRequestDto {
     @NotBlank
     @Size(min = 36, max = 36)
     private String reviewId;
 
+    @NotBlank
+    @Size(min = 36, max = 36)
+    private String transaktionsId;
+
     @Builder
     public HentReviewRequestDto(String transaktionsId, String reviewId) {
-        super(transaktionsId);
+        this.transaktionsId = transaktionsId;
         this.reviewId = reviewId;
     }
 }

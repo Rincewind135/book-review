@@ -9,7 +9,7 @@ import javax.validation.constraints.Size;
 
 @Getter
 @Setter
-public class OpretReviewRequestDto extends RequestDto {
+public class OpretReviewRequestDto {
     @NotBlank
     @Size(min = 36, max = 36)
     private String bogId;
@@ -26,9 +26,13 @@ public class OpretReviewRequestDto extends RequestDto {
     @Size(max = 255)
     private String beskrivelse;
 
+    @NotBlank
+    @Size(min = 36, max = 36)
+    private String transaktionsId;
+
     @Builder
     public OpretReviewRequestDto(String transaktionsId, String bogId, int score, String reviewForfatter, String beskrivelse) {
-        super(transaktionsId);
+        this.transaktionsId = transaktionsId;
         this.bogId = bogId;
         this.score = score;
         this.reviewForfatter = reviewForfatter;
