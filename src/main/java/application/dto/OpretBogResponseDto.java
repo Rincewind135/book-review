@@ -17,6 +17,7 @@ public class OpretBogResponseDto extends ResponseDto {
     }
 
     public enum StatusSubKode {
-        BOG_FINDES_ALLEREDE
+        BOG_FINDES_ALLEREDE,
+        EXCEPTION_THROWN
     }
 }

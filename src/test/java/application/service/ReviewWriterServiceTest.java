@@ -13,6 +13,7 @@ import org.mockito.MockitoAnnotations;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -37,6 +38,7 @@ class ReviewWriterServiceTest {
                 .reviewForfatter("Stephen King")
                 .beskrivelse("A good book")
                 .score(4)
+                .transaktionsId(UUID.randomUUID().toString())
                 .build();
 
         when(bogReaderService.findBogById(request.getBogId())).thenReturn(Optional.of(Bog.builder().id(request.getBogId()).build()));
@@ -126,6 +128,7 @@ class ReviewWriterServiceTest {
         assertEquals(ResponseDto.StatusKode.OK, result.getStatusKode());
         assertNull(result.getStatusSubKode());
         assertNotNull(result.getReviewId());
+        assertNotNull(result.getTransaktionsId());
     }
 
     private void assertResponseFEJL(OpretReviewResponseDto result, ResponseDto.StatusKode statusKode, OpretReviewResponseDto.StatusSubKode subKode) {
@@ -134,5 +137,6 @@ class ReviewWriterServiceTest {
         assertEquals(subKode, result.getStatusSubKode());
         assertNotNull(result.getFejlBeskrivelse());
         assertNull(result.getReviewId());
+        assertNotNull(result.getTransaktionsId());
     }
 }

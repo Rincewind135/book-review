@@ -14,6 +14,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -38,6 +39,7 @@ class BogWriterServiceTest {
                 .titel("The Dark Tower")
                 .forfatter("Stephen King")
                 .blurb("A good book")
+                .transaktionsId(UUID.randomUUID().toString())
                 .build();
 
         when(bogRepository.save(any())).thenAnswer(invocationOnMock -> invocationOnMock.getArguments()[0]);
@@ -70,8 +72,21 @@ class BogWriterServiceTest {
         OpretBogResponseDto result = bogWriterService.opret(request);
 
         // Assert
-        assertResponseFEJL(result, OpretBogResponseDto.StatusSubKode.BOG_FINDES_ALLEREDE);
+        assertResponseFEJL(result, ResponseDto.StatusKode.INPUT_FEJL, OpretBogResponseDto.StatusSubKode.BOG_FINDES_ALLEREDE);
         verify(bogRepository, times(0)).save(any());
+    }
+
+    @Test
+    void exceptionUnderOprettelse() {
+        // Arrange
+        when(bogRepository.save(any()))
+                .thenThrow(new RuntimeException("Boom!"));
+
+        // Act
+        OpretBogResponseDto result = bogWriterService.opret(request);
+
+        // Assert
+        assertResponseFEJL(result, ResponseDto.StatusKode.TEKNISK_FEJL, OpretBogResponseDto.StatusSubKode.EXCEPTION_THROWN);
     }
 
     private Bog getSavedBog() {
@@ -84,14 +99,16 @@ class BogWriterServiceTest {
         assertNotNull(result);
         assertEquals(ResponseDto.StatusKode.OK, result.getStatusKode());
         assertNull(result.getStatusSubKode());
+        assertNotNull(result.getTransaktionsId());
         assertNotNull(result.getBogId());
     }
 
-    private void assertResponseFEJL(OpretBogResponseDto result, OpretBogResponseDto.StatusSubKode subKode) {
+    private void assertResponseFEJL(OpretBogResponseDto result, ResponseDto.StatusKode statusKode, OpretBogResponseDto.StatusSubKode subKode) {
         assertNotNull(result);
-        assertEquals(ResponseDto.StatusKode.INPUT_FEJL, result.getStatusKode());
+        assertEquals(statusKode, result.getStatusKode());
         assertEquals(subKode, result.getStatusSubKode());
         assertNotNull(result.getFejlBeskrivelse());
         assertNull(result.getBogId());
+        assertNotNull(result.getTransaktionsId());
     }
 }
