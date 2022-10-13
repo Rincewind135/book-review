@@ -1,6 +1,9 @@
 package application.service;
 
-import application.dto.*;
+import application.DtoTestUtil;
+import application.dto.OpretReviewRequestDto;
+import application.dto.OpretReviewResponseDto;
+import application.dto.ResponseDto;
 import application.entity.Bog;
 import application.entity.Review;
 import application.repository.ReviewRepository;
@@ -11,13 +14,12 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.verify;
 
 class ReviewWriterServiceTest {
 
@@ -33,13 +35,7 @@ class ReviewWriterServiceTest {
     void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        request = OpretReviewRequestDto.builder()
-                .bogId(UUID.randomUUID().toString())
-                .reviewForfatter("Stephen King")
-                .beskrivelse("A good book")
-                .score(4)
-                .transaktionsId(UUID.randomUUID().toString())
-                .build();
+        request = DtoTestUtil.newOpretReviewRequestDto();
 
         when(bogReaderService.findBogById(request.getBogId())).thenReturn(Optional.of(Bog.builder().id(request.getBogId()).build()));
         when(reviewRepository.save(any())).thenAnswer(invocationOnMock -> invocationOnMock.getArguments()[0]);

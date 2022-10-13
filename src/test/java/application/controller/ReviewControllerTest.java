@@ -1,5 +1,6 @@
 package application.controller;
 
+import application.DtoTestUtil;
 import application.dto.*;
 import application.service.BogReaderService;
 import application.service.BogWriterService;
@@ -134,12 +135,7 @@ class ReviewControllerTest {
     }
 
     private static OpretReviewRequestDto newOpretReviewRequestDto() {
-        return OpretReviewRequestDto.builder()
-                .bogId(UUID.randomUUID().toString())
-                .score(3)
-                .beskrivelse("aksjdl")
-                .reviewForfatter("Michael")
-                .build();
+        return DtoTestUtil.newOpretReviewRequestDto();
     }
 
     private HentReviewRequestDto newHentReviewRequestDto() {

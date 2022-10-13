@@ -1,5 +1,6 @@
 package application.service;
 
+import application.DtoTestUtil;
 import application.dto.OpretBogRequestDto;
 import application.dto.OpretBogResponseDto;
 import application.dto.ResponseDto;
@@ -14,7 +15,6 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -35,12 +35,7 @@ class BogWriterServiceTest {
     void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        request = OpretBogRequestDto.builder()
-                .titel("The Dark Tower")
-                .forfatter("Stephen King")
-                .blurb("A good book")
-                .transaktionsId(UUID.randomUUID().toString())
-                .build();
+        request = DtoTestUtil.newOpretBogRequestDto();
 
         when(bogRepository.save(any())).thenAnswer(invocationOnMock -> invocationOnMock.getArguments()[0]);
         bogWriterService = new BogWriterService(bogRepository, bogReaderService);

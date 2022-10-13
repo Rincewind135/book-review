@@ -1,5 +1,6 @@
 package application.service;
 
+import application.DtoTestUtil;
 import application.dto.HentBogRequestDto;
 import application.dto.HentBogResponseDto;
 import application.dto.ResponseDto;
@@ -33,10 +34,7 @@ class BogReaderServiceTest {
     void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        request = HentBogRequestDto.builder()
-                .titel("The Dark Tower")
-                .transaktionsId(UUID.randomUUID().toString())
-                .build();
+        request = DtoTestUtil.newHentBogRequestDto();
 
         bogReaderService = new BogReaderService(bogRepository);
         bog = Bog.builder()
