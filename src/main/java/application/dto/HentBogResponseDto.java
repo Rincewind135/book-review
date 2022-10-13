@@ -1,9 +1,10 @@
 package application.dto;
 
-import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class HentBogResponseDto extends ResponseDto {
     private StatusSubKode statusSubKode;
 
@@ -12,17 +13,12 @@ public class HentBogResponseDto extends ResponseDto {
     private String forfatter;
     private String blurb;
 
-    @Builder
-    public HentBogResponseDto(StatusKode statusKode, String fejlBeskrivelse, StatusSubKode statusSubKode, String bogId, String titel, String forfatter, String blurb) {
-        super(statusKode, fejlBeskrivelse);
-        this.statusSubKode = statusSubKode;
-        this.bogId = bogId;
-        this.titel = titel;
-        this.forfatter = forfatter;
-        this.blurb = blurb;
+    public HentBogResponseDto() {
+        super();
     }
 
     public enum StatusSubKode {
-        UKENDT_BOG
+        UKENDT_BOG,
+        EXCEPTION_THROWN
     }
 }

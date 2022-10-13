@@ -1,6 +1,9 @@
 package application.service;
 
-import application.dto.*;
+import application.util.DtoTestUtil;
+import application.dto.OpretReviewRequestDto;
+import application.dto.OpretReviewResponseDto;
+import application.dto.ResponseDto;
 import application.entity.Bog;
 import application.entity.Review;
 import application.repository.ReviewRepository;
@@ -11,12 +14,12 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Optional;
-import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.verify;
 
 class ReviewWriterServiceTest {
 
@@ -32,12 +35,7 @@ class ReviewWriterServiceTest {
     void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        request = OpretReviewRequestDto.builder()
-                .bogId(UUID.randomUUID().toString())
-                .reviewForfatter("Stephen King")
-                .beskrivelse("A good book")
-                .score(4)
-                .build();
+        request = DtoTestUtil.newOpretReviewRequestDto();
 
         when(bogReaderService.findBogById(request.getBogId())).thenReturn(Optional.of(Bog.builder().id(request.getBogId()).build()));
         when(reviewRepository.save(any())).thenAnswer(invocationOnMock -> invocationOnMock.getArguments()[0]);
@@ -72,7 +70,7 @@ class ReviewWriterServiceTest {
         OpretReviewResponseDto result = reviewWriterService.opret(request);
 
         // Assert
-        assertResponseFEJL(result, OpretReviewResponseDto.StatusSubKode.UKENDT_BOG);
+        assertResponseFEJL(result, ResponseDto.StatusKode.INPUT_FEJL, OpretReviewResponseDto.StatusSubKode.UKENDT_BOG);
         verify(reviewRepository, times(0)).save(any());
     }
 
@@ -85,7 +83,7 @@ class ReviewWriterServiceTest {
         OpretReviewResponseDto result = reviewWriterService.opret(request);
 
         // Assert
-        assertResponseFEJL(result, OpretReviewResponseDto.StatusSubKode.UGYLDIG_SCORE);
+        assertResponseFEJL(result, ResponseDto.StatusKode.INPUT_FEJL, OpretReviewResponseDto.StatusSubKode.UGYLDIG_SCORE);
         verify(reviewRepository, times(0)).save(any());
     }
 
@@ -98,8 +96,21 @@ class ReviewWriterServiceTest {
         OpretReviewResponseDto result = reviewWriterService.opret(request);
 
         // Assert
-        assertResponseFEJL(result, OpretReviewResponseDto.StatusSubKode.UGYLDIG_SCORE);
+        assertResponseFEJL(result, ResponseDto.StatusKode.INPUT_FEJL, OpretReviewResponseDto.StatusSubKode.UGYLDIG_SCORE);
         verify(reviewRepository, times(0)).save(any());
+    }
+
+    @Test
+    void exceptionUnderOprettelse() {
+        // Arrange
+        when(reviewRepository.save(any()))
+                .thenThrow(new RuntimeException("Boom!"));
+
+        // Act
+        OpretReviewResponseDto result = reviewWriterService.opret(request);
+
+        // Assert
+        assertResponseFEJL(result, ResponseDto.StatusKode.TEKNISK_FEJL, OpretReviewResponseDto.StatusSubKode.EXCEPTION_THROWN);
     }
 
     private Review getSavedReview() {
@@ -113,13 +124,15 @@ class ReviewWriterServiceTest {
         assertEquals(ResponseDto.StatusKode.OK, result.getStatusKode());
         assertNull(result.getStatusSubKode());
         assertNotNull(result.getReviewId());
+        assertNotNull(result.getTransaktionsId());
     }
 
-    private void assertResponseFEJL(OpretReviewResponseDto result, OpretReviewResponseDto.StatusSubKode subKode) {
+    private void assertResponseFEJL(OpretReviewResponseDto result, ResponseDto.StatusKode statusKode, OpretReviewResponseDto.StatusSubKode subKode) {
         assertNotNull(result);
-        assertEquals(ResponseDto.StatusKode.FEJL, result.getStatusKode());
+        assertEquals(statusKode, result.getStatusKode());
         assertEquals(subKode, result.getStatusSubKode());
         assertNotNull(result.getFejlBeskrivelse());
         assertNull(result.getReviewId());
+        assertNotNull(result.getTransaktionsId());
     }
 }

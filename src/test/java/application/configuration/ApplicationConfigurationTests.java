@@ -16,18 +16,14 @@
 package application.configuration;
 
 import application.controller.ReviewController;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringRunner.class)
@@ -47,13 +43,4 @@ public class ApplicationConfigurationTests {
 	public void contextLoads() {
 		assertNotNull(reviewController);
 	}
-
-	@Test
-	@Ignore
-	public void testGreeting() {
-		ResponseEntity<String> entity = restTemplate
-				.getForEntity("http://localhost:" + this.port + "/", String.class);
-		assertEquals(HttpStatus.OK, entity.getStatusCode());
-	}
-
 }

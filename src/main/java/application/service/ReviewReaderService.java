@@ -15,38 +15,58 @@ import java.util.Optional;
 public class ReviewReaderService {
 
     private final ReviewRepository reviewRepository;
-    
+
     public HentReviewResponseDto hent(HentReviewRequestDto requestDto) {
-        Optional<Review> reviewOptional = findReviewById(requestDto.getReviewId());
+        try {
+            return hentHvisEksisterer(requestDto);
+        } catch (Exception e) {
+            return tekniskFejl(requestDto, e);
+        }
+    }
+
+    private HentReviewResponseDto hentHvisEksisterer(HentReviewRequestDto requestDto) {
+        Optional<Review> reviewOptional = indlaes(requestDto);
 
         if (reviewOptional.isPresent()) {
             Review review = reviewOptional.get();
-            return reviewErHentet(review);
+            return mapReviewTilDto(requestDto, review);
         } else {
             return fejlUkendtReview(requestDto);
         }
     }
 
-    private static HentReviewResponseDto reviewErHentet(Review review) {
-        return HentReviewResponseDto.builder()
-                .statusKode(ResponseDto.StatusKode.OK)
-                .reviewForfatter(review.getReviewForfatter())
-                .beskrivelse(review.getBeskrivelse())
-                .score(review.getScore())
-                .reviewId(review.getId())
-                .bogId(review.getBog().getId())
-                .build();
+    private Optional<Review> indlaes(HentReviewRequestDto requestDto) {
+        return reviewRepository.findById(requestDto.getReviewId());
     }
 
-    private static HentReviewResponseDto fejlUkendtReview(HentReviewRequestDto requestDto) {
-        return HentReviewResponseDto.builder()
-                .statusKode(ResponseDto.StatusKode.FEJL)
-                .statusSubKode(HentReviewResponseDto.StatusSubKode.UKENDT_REVIEW)
-                .fejlBeskrivelse("Kunne ikke finde en review med ID " + requestDto.getReviewId())
-                .build();
+    private HentReviewResponseDto mapReviewTilDto(HentReviewRequestDto requestDto, Review review) {
+        HentReviewResponseDto responseDto = new HentReviewResponseDto();
+
+        responseDto.setStatusKode(ResponseDto.StatusKode.OK);
+        responseDto.setReviewForfatter(review.getReviewForfatter());
+        responseDto.setBeskrivelse(review.getBeskrivelse());
+        responseDto.setScore(review.getScore());
+        responseDto.setReviewId(review.getId());
+        responseDto.setBogId(review.getBog().getId());
+        responseDto.setTransaktionsId(requestDto.getTransaktionsId());
+        return responseDto;
     }
-    
-    private Optional<Review> findReviewById(String id) {
-        return reviewRepository.findById(id);
+
+    private HentReviewResponseDto fejlUkendtReview(HentReviewRequestDto requestDto) {
+        HentReviewResponseDto responseDto = new HentReviewResponseDto();
+        responseDto.setStatusKode(ResponseDto.StatusKode.INPUT_FEJL);
+        responseDto.setStatusSubKode(HentReviewResponseDto.StatusSubKode.UKENDT_REVIEW);
+        responseDto.setFejlBeskrivelse("Kunne ikke finde en review med ID " + requestDto.getReviewId());
+        responseDto.setTransaktionsId(requestDto.getTransaktionsId());
+        return responseDto;
+    }
+
+    private HentReviewResponseDto tekniskFejl(HentReviewRequestDto requestDto, Exception e) {
+        HentReviewResponseDto responseDto = new HentReviewResponseDto();
+        responseDto.setStatusKode(ResponseDto.StatusKode.TEKNISK_FEJL);
+        responseDto.setStatusSubKode(HentReviewResponseDto.StatusSubKode.EXCEPTION_THROWN);
+        responseDto.setFejlBeskrivelse(e.getMessage());
+        responseDto.setTransaktionsId(requestDto.getTransaktionsId());
+        return responseDto;
     }
 }

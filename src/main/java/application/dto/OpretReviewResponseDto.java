@@ -1,23 +1,21 @@
 package application.dto;
 
-import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class OpretReviewResponseDto extends ResponseDto {
     private StatusSubKode statusSubKode;
 
     private String reviewId;
 
-    @Builder
-    public OpretReviewResponseDto(StatusKode statusKode, String fejlBeskrivelse, StatusSubKode statusSubKode, String reviewId) {
-        super(statusKode, fejlBeskrivelse);
-        this.statusSubKode = statusSubKode;
-        this.reviewId = reviewId;
+    public OpretReviewResponseDto() {
     }
 
     public enum StatusSubKode {
         UKENDT_BOG
         ,UGYLDIG_SCORE
+        ,EXCEPTION_THROWN
     }
 }

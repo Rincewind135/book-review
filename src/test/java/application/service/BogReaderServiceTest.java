@@ -1,5 +1,6 @@
 package application.service;
 
+import application.util.DtoTestUtil;
 import application.dto.HentBogRequestDto;
 import application.dto.HentBogResponseDto;
 import application.dto.ResponseDto;
@@ -15,7 +16,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -32,9 +34,7 @@ class BogReaderServiceTest {
     void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        request = HentBogRequestDto.builder()
-                .titel("The Dark Tower")
-                .build();
+        request = DtoTestUtil.newHentBogRequestDto();
 
         bogReaderService = new BogReaderService(bogRepository);
         bog = Bog.builder()
@@ -74,21 +74,36 @@ class BogReaderServiceTest {
         HentBogResponseDto result = bogReaderService.hent(request);
 
         // Assert
-        assertResponseFEJL(result, HentBogResponseDto.StatusSubKode.UKENDT_BOG);
+        assertResponseFEJL(result, ResponseDto.StatusKode.INPUT_FEJL, HentBogResponseDto.StatusSubKode.UKENDT_BOG);
+    }
+
+    @Test
+    void exceptionUnderLaesning() {
+        // Arrange
+        when(bogRepository.findBogByTitel(any()))
+                .thenThrow(new RuntimeException("Boom!"));
+
+        // Act
+        HentBogResponseDto result = bogReaderService.hent(request);
+
+        // Assert
+        assertResponseFEJL(result, ResponseDto.StatusKode.TEKNISK_FEJL, HentBogResponseDto.StatusSubKode.EXCEPTION_THROWN);
     }
 
     private void assertResponseOK(HentBogResponseDto result) {
         assertNotNull(result);
         assertEquals(ResponseDto.StatusKode.OK, result.getStatusKode());
         assertNull(result.getStatusSubKode());
+        assertNotNull(result.getTransaktionsId());
         assertNotNull(result.getBogId());
     }
 
-    private void assertResponseFEJL(HentBogResponseDto result, HentBogResponseDto.StatusSubKode subKode) {
+    private void assertResponseFEJL(HentBogResponseDto result, ResponseDto.StatusKode statusKode, HentBogResponseDto.StatusSubKode subKode) {
         assertNotNull(result);
-        assertEquals(ResponseDto.StatusKode.FEJL, result.getStatusKode());
+        assertEquals(statusKode, result.getStatusKode());
         assertEquals(subKode, result.getStatusSubKode());
         assertNotNull(result.getFejlBeskrivelse());
+        assertNotNull(result.getTransaktionsId());
         assertNull(result.getBogId());
     }
 }

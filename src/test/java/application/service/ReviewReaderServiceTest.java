@@ -15,6 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 class ReviewReaderServiceTest {
@@ -32,6 +33,7 @@ class ReviewReaderServiceTest {
 
         request = HentReviewRequestDto.builder()
                 .reviewId(UUID.randomUUID().toString())
+                .transaktionsId(UUID.randomUUID().toString())
                 .build();
 
         reviewReaderService = new ReviewReaderService(reviewRepository);
@@ -74,21 +76,36 @@ class ReviewReaderServiceTest {
         HentReviewResponseDto result = reviewReaderService.hent(request);
 
         // Assert
-        assertResponseFEJL(result, HentReviewResponseDto.StatusSubKode.UKENDT_REVIEW);
+        assertResponseFEJL(result, ResponseDto.StatusKode.INPUT_FEJL, HentReviewResponseDto.StatusSubKode.UKENDT_REVIEW);
+    }
+
+    @Test
+    void exceptionUnderLaesning() {
+        // Arrange
+        when(reviewRepository.findById(any()))
+                .thenThrow(new RuntimeException("Boom!"));
+
+        // Act
+        HentReviewResponseDto result = reviewReaderService.hent(request);
+
+        // Assert
+        assertResponseFEJL(result, ResponseDto.StatusKode.TEKNISK_FEJL, HentReviewResponseDto.StatusSubKode.EXCEPTION_THROWN);
     }
 
     private void assertResponseOK(HentReviewResponseDto result) {
         assertNotNull(result);
         assertEquals(ResponseDto.StatusKode.OK, result.getStatusKode());
         assertNull(result.getStatusSubKode());
+        assertNotNull(result.getTransaktionsId());
         assertNotNull(result.getBogId());
     }
 
-    private void assertResponseFEJL(HentReviewResponseDto result, HentReviewResponseDto.StatusSubKode subKode) {
+    private void assertResponseFEJL(HentReviewResponseDto result, ResponseDto.StatusKode statusKode, HentReviewResponseDto.StatusSubKode subKode) {
         assertNotNull(result);
-        assertEquals(ResponseDto.StatusKode.FEJL, result.getStatusKode());
+        assertEquals(statusKode, result.getStatusKode());
         assertEquals(subKode, result.getStatusSubKode());
         assertNotNull(result.getFejlBeskrivelse());
         assertNull(result.getBogId());
+        assertNotNull(result.getTransaktionsId());
     }
 }

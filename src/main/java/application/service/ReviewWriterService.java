@@ -19,62 +19,80 @@ public class ReviewWriterService {
     private final ReviewRepository reviewRepository;
 
     public OpretReviewResponseDto opret(OpretReviewRequestDto requestDto) {
+        try {
+            return opretHvisValid(requestDto);
+        } catch (Exception e) {
+            return tekniskFejl(requestDto, e);
+        }
+    }
 
+    private OpretReviewResponseDto opretHvisValid(OpretReviewRequestDto requestDto) {
         Optional<OpretReviewResponseDto> fejlFundet = validerInput(requestDto);
-
         if (fejlFundet.isPresent()) {
             return fejlFundet.get();
         }
-
         Review review = opretReview(requestDto);
-
-        return OpretReviewResponseDto.builder()
-                .reviewId(review.getId())
-                .statusKode(ResponseDto.StatusKode.OK)
-                .build();
+        return reviewOprettetOkay(requestDto, review);
     }
 
     private Optional<OpretReviewResponseDto> validerInput(OpretReviewRequestDto requestDto) {
         if (requestDto.getScore() < 0) {
-            return fejlUgyldigScore("Score må mindst være 0");
+            return Optional.of(fejlUgyldigScore(requestDto, "Score må mindst være 0"));
         }
         if (requestDto.getScore() > 5) {
-            return fejlUgyldigScore("Score må højest være 0");
+            return Optional.of(fejlUgyldigScore(requestDto, "Score må højest være 0"));
         }
         if (!bogReaderService.findBogById(requestDto.getBogId()).isPresent()) {
-            return fejlUkendtBog(requestDto.getBogId());
+            return Optional.of(fejlUkendtBog(requestDto));
         }
 
         return Optional.empty();
     }
 
-    private static Optional<OpretReviewResponseDto> fejlUgyldigScore(String fejlBeskrivelse) {
-        return Optional.of(
-                OpretReviewResponseDto.builder()
-                        .statusKode(ResponseDto.StatusKode.FEJL)
-                        .statusSubKode(OpretReviewResponseDto.StatusSubKode.UGYLDIG_SCORE)
-                        .fejlBeskrivelse(fejlBeskrivelse)
-                        .build()
-        );
+    private OpretReviewResponseDto fejlUgyldigScore(OpretReviewRequestDto requestDto, String fejlBeskrivelse) {
+        OpretReviewResponseDto responseDto = new OpretReviewResponseDto();
+        responseDto.setStatusKode(ResponseDto.StatusKode.INPUT_FEJL);
+        responseDto.setStatusSubKode(OpretReviewResponseDto.StatusSubKode.UGYLDIG_SCORE);
+        responseDto.setFejlBeskrivelse(fejlBeskrivelse);
+        responseDto.setTransaktionsId(requestDto.getTransaktionsId());
+        return responseDto;
+
     }
 
-    private static Optional<OpretReviewResponseDto> fejlUkendtBog(String bogId) {
-        return Optional.of(
-                OpretReviewResponseDto.builder()
-                        .statusKode(ResponseDto.StatusKode.FEJL)
-                        .statusSubKode(OpretReviewResponseDto.StatusSubKode.UKENDT_BOG)
-                        .fejlBeskrivelse("Kunne ikke finde en bog med ID " + bogId)
-                        .build()
-        );
+    private OpretReviewResponseDto fejlUkendtBog(OpretReviewRequestDto requestDto) {
+        OpretReviewResponseDto responseDto = new OpretReviewResponseDto();
+        responseDto.setStatusKode(ResponseDto.StatusKode.INPUT_FEJL);
+        responseDto.setStatusSubKode(OpretReviewResponseDto.StatusSubKode.UKENDT_BOG);
+        responseDto.setFejlBeskrivelse("Kunne ikke finde en bog med ID " + requestDto.getBogId());
+        responseDto.setTransaktionsId(requestDto.getTransaktionsId());
+        return responseDto;
     }
 
     private Review opretReview(OpretReviewRequestDto requestDto) {
         return reviewRepository.save(Review.builder()
-                .id(UUID. randomUUID().toString())
+                .id(UUID.randomUUID().toString())
                 .reviewForfatter(requestDto.getReviewForfatter())
                 .score(requestDto.getScore())
                 .beskrivelse(requestDto.getBeskrivelse())
                 .bog(bogReaderService.findBogById(requestDto.getBogId()).orElse(null))
                 .build());
+    }
+
+    private static OpretReviewResponseDto reviewOprettetOkay(OpretReviewRequestDto requestDto, Review review) {
+        OpretReviewResponseDto responseDto = new OpretReviewResponseDto();
+        responseDto.setReviewId(review.getId());
+        responseDto.setStatusKode(ResponseDto.StatusKode.OK);
+        responseDto.setTransaktionsId(requestDto.getTransaktionsId());
+        return responseDto;
+    }
+
+    private OpretReviewResponseDto tekniskFejl(OpretReviewRequestDto requestDto, Exception e) {
+        OpretReviewResponseDto responseDto = new OpretReviewResponseDto();
+        responseDto.setStatusKode(ResponseDto.StatusKode.TEKNISK_FEJL);
+        responseDto.setStatusSubKode(OpretReviewResponseDto.StatusSubKode.EXCEPTION_THROWN);
+        responseDto.setFejlBeskrivelse(e.getMessage());
+        responseDto.setTransaktionsId(requestDto.getTransaktionsId());
+        return responseDto;
+
     }
 }
