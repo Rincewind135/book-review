@@ -2,55 +2,22 @@ package application.controller;
 
 import application.DtoTestUtil;
 import application.dto.*;
-import application.service.BogReaderService;
-import application.service.BogWriterService;
-import application.service.ReviewReaderService;
-import application.service.ReviewWriterService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
-
-import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
 @AutoConfigureDataJpa
-class ReviewControllerTest {
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockBean
-    private BogReaderService bogReaderService;
-    @MockBean
-    private BogWriterService bogWriterService;
-    @MockBean
-    private ReviewReaderService reviewReaderService;
-    @MockBean
-    private ReviewWriterService reviewWriterService;
-
-    @BeforeEach
-    void setUp() {
-        when(reviewWriterService.opret(any())).thenReturn(OpretReviewResponseDto.builder().statusKode(ResponseDto.StatusKode.OK).build());
-        when(reviewReaderService.hent(any())).thenReturn(HentReviewResponseDto.builder().statusKode(ResponseDto.StatusKode.OK).build());
-        when(bogWriterService.opret(any())).thenReturn(OpretBogResponseDto.builder().statusKode(ResponseDto.StatusKode.OK).build());
-        when(bogReaderService.hent(any())).thenReturn(HentBogResponseDto.builder().statusKode(ResponseDto.StatusKode.OK).build());
-    }
+class ReviewControllerTest extends AbstractControllerTest {
 
     @Test
     void controllerErOppe() throws Exception {
-        OpretReviewRequestDto opretRequestDto = newOpretReviewRequestDto();
-        HentReviewRequestDto hentRequestDto = newHentReviewRequestDto();
+        OpretReviewRequestDto opretRequestDto = DtoTestUtil.newOpretReviewRequestDto();
+        HentReviewRequestDto hentRequestDto = DtoTestUtil.newHentReviewRequestDto();
 
         kaldOpretReviewEndpoint(opretRequestDto, status().isOk());
         kaldHentReviewEndpoint(hentRequestDto, status().isOk());
@@ -60,31 +27,31 @@ class ReviewControllerTest {
     void opretValidererInput() throws Exception {
         OpretReviewRequestDto requestDto;
 
-        requestDto = newOpretReviewRequestDto();
+        requestDto = DtoTestUtil.newOpretReviewRequestDto();
         requestDto.setBogId(null);
         kaldOpretReviewEndpoint(requestDto, status().isBadRequest());
 
-        requestDto = newOpretReviewRequestDto();
+        requestDto = DtoTestUtil.newOpretReviewRequestDto();
         requestDto.setBogId(requestDto.getBogId().substring(1));
         kaldOpretReviewEndpoint(requestDto, status().isBadRequest());
 
-        requestDto = newOpretReviewRequestDto();
+        requestDto = DtoTestUtil.newOpretReviewRequestDto();
         requestDto.setBogId(requestDto.getBogId() + "x");
         kaldOpretReviewEndpoint(requestDto, status().isBadRequest());
 
-        requestDto = newOpretReviewRequestDto();
+        requestDto = DtoTestUtil.newOpretReviewRequestDto();
         requestDto.setScore(-1);
         kaldOpretReviewEndpoint(requestDto, status().isBadRequest());
 
-        requestDto = newOpretReviewRequestDto();
+        requestDto = DtoTestUtil.newOpretReviewRequestDto();
         requestDto.setScore(6);
         kaldOpretReviewEndpoint(requestDto, status().isBadRequest());
 
-        requestDto = newOpretReviewRequestDto();
+        requestDto = DtoTestUtil.newOpretReviewRequestDto();
         requestDto.setBeskrivelse(null);
         kaldOpretReviewEndpoint(requestDto, status().isBadRequest());
 
-        requestDto = newOpretReviewRequestDto();
+        requestDto = DtoTestUtil.newOpretReviewRequestDto();
         requestDto.setReviewForfatter(null);
         kaldOpretReviewEndpoint(requestDto, status().isBadRequest());
     }
@@ -92,14 +59,14 @@ class ReviewControllerTest {
     @Test
     void writerServiceBrokkerSigOverInput() throws Exception {
         when(reviewWriterService.opret(any())).thenReturn(OpretReviewResponseDto.builder().statusKode(ResponseDto.StatusKode.INPUT_FEJL).build());
-        OpretReviewRequestDto requestDto = newOpretReviewRequestDto();
+        OpretReviewRequestDto requestDto = DtoTestUtil.newOpretReviewRequestDto();
         kaldOpretReviewEndpoint(requestDto, status().isBadRequest());
     }
 
     @Test
     void writerServiceFejler() throws Exception {
         when(reviewWriterService.opret(any())).thenReturn(OpretReviewResponseDto.builder().statusKode(ResponseDto.StatusKode.TEKNISK_FEJL).build());
-        OpretReviewRequestDto requestDto = newOpretReviewRequestDto();
+        OpretReviewRequestDto requestDto = DtoTestUtil.newOpretReviewRequestDto();
         kaldOpretReviewEndpoint(requestDto, status().isInternalServerError());
     }
 
@@ -107,15 +74,15 @@ class ReviewControllerTest {
     void hentValidererInput() throws Exception {
         HentReviewRequestDto requestDto;
 
-        requestDto = newHentReviewRequestDto();
+        requestDto = DtoTestUtil.newHentReviewRequestDto();
         requestDto.setReviewId(null);
         kaldHentReviewEndpoint(requestDto, status().isBadRequest());
 
-        requestDto = newHentReviewRequestDto();
+        requestDto = DtoTestUtil.newHentReviewRequestDto();
         requestDto.setReviewId(requestDto.getReviewId().substring(1));
         kaldHentReviewEndpoint(requestDto, status().isBadRequest());
 
-        requestDto = newHentReviewRequestDto();
+        requestDto = DtoTestUtil.newHentReviewRequestDto();
         requestDto.setReviewId(requestDto.getReviewId() + "x");
         kaldHentReviewEndpoint(requestDto, status().isBadRequest());
     }
@@ -123,46 +90,14 @@ class ReviewControllerTest {
     @Test
     void readerServiceBrokkerSigOverInput() throws Exception {
         when(reviewReaderService.hent(any())).thenReturn(HentReviewResponseDto.builder().statusKode(ResponseDto.StatusKode.INPUT_FEJL).build());
-        HentReviewRequestDto requestDto = newHentReviewRequestDto();
+        HentReviewRequestDto requestDto = DtoTestUtil.newHentReviewRequestDto();
         kaldHentReviewEndpoint(requestDto, status().isBadRequest());
     }
 
     @Test
     void readerServiceFejler() throws Exception {
         when(reviewReaderService.hent(any())).thenReturn(HentReviewResponseDto.builder().statusKode(ResponseDto.StatusKode.TEKNISK_FEJL).build());
-        HentReviewRequestDto requestDto = newHentReviewRequestDto();
+        HentReviewRequestDto requestDto = DtoTestUtil.newHentReviewRequestDto();
         kaldHentReviewEndpoint(requestDto, status().isInternalServerError());
-    }
-
-    private static OpretReviewRequestDto newOpretReviewRequestDto() {
-        return DtoTestUtil.newOpretReviewRequestDto();
-    }
-
-    private HentReviewRequestDto newHentReviewRequestDto() {
-        return HentReviewRequestDto.builder()
-                .reviewId(UUID.randomUUID().toString())
-                .build();
-    }
-
-    public static String asJsonString(final Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void kaldOpretReviewEndpoint(OpretReviewRequestDto requestDto, ResultMatcher expectedResult) throws Exception {
-        mockMvc.perform(post("/review/opret")
-                        .contentType("application/json")
-                        .content(asJsonString(requestDto)))
-                .andExpect(expectedResult);
-    }
-
-    private void kaldHentReviewEndpoint(HentReviewRequestDto requestDto, ResultMatcher expectedResult) throws Exception {
-        mockMvc.perform(get("/review/hent")
-                        .contentType("application/json")
-                        .content(asJsonString(requestDto)))
-                .andExpect(expectedResult);
     }
 }
