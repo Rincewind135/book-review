@@ -46,7 +46,7 @@ public class BogWriterService {
     private Optional<OpretBogResponseDto> fejlBogFindesAllerede(String titel) {
         return Optional.of(
                 OpretBogResponseDto.builder()
-                        .statusKode(ResponseDto.StatusKode.FEJL)
+                        .statusKode(ResponseDto.StatusKode.INPUT_FEJL)
                         .statusSubKode(OpretBogResponseDto.StatusSubKode.BOG_FINDES_ALLEREDE)
                         .fejlBeskrivelse("Bogen med titel " + titel + " er allerede oprettet")
                         .build()

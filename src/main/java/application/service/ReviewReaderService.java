@@ -40,7 +40,7 @@ public class ReviewReaderService {
 
     private static HentReviewResponseDto fejlUkendtReview(HentReviewRequestDto requestDto) {
         return HentReviewResponseDto.builder()
-                .statusKode(ResponseDto.StatusKode.FEJL)
+                .statusKode(ResponseDto.StatusKode.INPUT_FEJL)
                 .statusSubKode(HentReviewResponseDto.StatusSubKode.UKENDT_REVIEW)
                 .fejlBeskrivelse("Kunne ikke finde en review med ID " + requestDto.getReviewId())
                 .build();

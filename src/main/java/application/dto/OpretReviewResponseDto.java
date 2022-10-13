@@ -19,5 +19,6 @@ public class OpretReviewResponseDto extends ResponseDto {
     public enum StatusSubKode {
         UKENDT_BOG
         ,UGYLDIG_SCORE
+        ,EXCEPTION_THROWN
     }
 }

@@ -11,6 +11,7 @@ abstract public class ResponseDto {
 
     public enum StatusKode {
         OK
-        ,FEJL
+        ,INPUT_FEJL
+        ,TEKNISK_FEJL
     }
 }

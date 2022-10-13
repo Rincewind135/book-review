@@ -40,7 +40,7 @@ public class BogReaderService {
 
     private static HentBogResponseDto fejlUkendtBog(HentBogRequestDto requestDto) {
         return HentBogResponseDto.builder()
-                .statusKode(ResponseDto.StatusKode.FEJL)
+                .statusKode(ResponseDto.StatusKode.INPUT_FEJL)
                 .statusSubKode(HentBogResponseDto.StatusSubKode.UKENDT_BOG)
                 .fejlBeskrivelse("Kunne ikke finde en bog med titel " + requestDto.getTitel())
                 .build();

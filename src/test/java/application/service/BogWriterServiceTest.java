@@ -89,7 +89,7 @@ class BogWriterServiceTest {
 
     private void assertResponseFEJL(OpretBogResponseDto result, OpretBogResponseDto.StatusSubKode subKode) {
         assertNotNull(result);
-        assertEquals(ResponseDto.StatusKode.FEJL, result.getStatusKode());
+        assertEquals(ResponseDto.StatusKode.INPUT_FEJL, result.getStatusKode());
         assertEquals(subKode, result.getStatusSubKode());
         assertNotNull(result.getFejlBeskrivelse());
         assertNull(result.getBogId());

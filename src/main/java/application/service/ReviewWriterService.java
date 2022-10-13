@@ -19,19 +19,20 @@ public class ReviewWriterService {
     private final ReviewRepository reviewRepository;
 
     public OpretReviewResponseDto opret(OpretReviewRequestDto requestDto) {
+        try {
+            return opretHvisValid(requestDto);
+        } catch (Exception e) {
+            return tekniskFejl(e);
+        }
+    }
 
+    private OpretReviewResponseDto opretHvisValid(OpretReviewRequestDto requestDto) {
         Optional<OpretReviewResponseDto> fejlFundet = validerInput(requestDto);
-
         if (fejlFundet.isPresent()) {
             return fejlFundet.get();
         }
-
         Review review = opretReview(requestDto);
-
-        return OpretReviewResponseDto.builder()
-                .reviewId(review.getId())
-                .statusKode(ResponseDto.StatusKode.OK)
-                .build();
+        return reviewOprettetOkay(review);
     }
 
     private Optional<OpretReviewResponseDto> validerInput(OpretReviewRequestDto requestDto) {
@@ -51,7 +52,7 @@ public class ReviewWriterService {
     private static Optional<OpretReviewResponseDto> fejlUgyldigScore(String fejlBeskrivelse) {
         return Optional.of(
                 OpretReviewResponseDto.builder()
-                        .statusKode(ResponseDto.StatusKode.FEJL)
+                        .statusKode(ResponseDto.StatusKode.INPUT_FEJL)
                         .statusSubKode(OpretReviewResponseDto.StatusSubKode.UGYLDIG_SCORE)
                         .fejlBeskrivelse(fejlBeskrivelse)
                         .build()
@@ -61,7 +62,7 @@ public class ReviewWriterService {
     private static Optional<OpretReviewResponseDto> fejlUkendtBog(String bogId) {
         return Optional.of(
                 OpretReviewResponseDto.builder()
-                        .statusKode(ResponseDto.StatusKode.FEJL)
+                        .statusKode(ResponseDto.StatusKode.INPUT_FEJL)
                         .statusSubKode(OpretReviewResponseDto.StatusSubKode.UKENDT_BOG)
                         .fejlBeskrivelse("Kunne ikke finde en bog med ID " + bogId)
                         .build()
@@ -76,5 +77,21 @@ public class ReviewWriterService {
                 .beskrivelse(requestDto.getBeskrivelse())
                 .bog(bogReaderService.findBogById(requestDto.getBogId()).orElse(null))
                 .build());
+    }
+
+    private static OpretReviewResponseDto reviewOprettetOkay(Review review) {
+        return OpretReviewResponseDto.builder()
+                .reviewId(review.getId())
+                .statusKode(ResponseDto.StatusKode.OK)
+                .build();
+    }
+
+    private OpretReviewResponseDto tekniskFejl(Exception e) {
+        return OpretReviewResponseDto.builder()
+                .statusKode(ResponseDto.StatusKode.TEKNISK_FEJL)
+                .statusSubKode(OpretReviewResponseDto.StatusSubKode.EXCEPTION_THROWN)
+                .fejlBeskrivelse(e.getMessage())
+                .build();
+
     }
 }

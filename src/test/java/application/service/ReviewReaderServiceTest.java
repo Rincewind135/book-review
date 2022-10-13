@@ -86,7 +86,7 @@ class ReviewReaderServiceTest {
 
     private void assertResponseFEJL(HentReviewResponseDto result, HentReviewResponseDto.StatusSubKode subKode) {
         assertNotNull(result);
-        assertEquals(ResponseDto.StatusKode.FEJL, result.getStatusKode());
+        assertEquals(ResponseDto.StatusKode.INPUT_FEJL, result.getStatusKode());
         assertEquals(subKode, result.getStatusSubKode());
         assertNotNull(result.getFejlBeskrivelse());
         assertNull(result.getBogId());

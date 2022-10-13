@@ -72,7 +72,7 @@ class ReviewWriterServiceTest {
         OpretReviewResponseDto result = reviewWriterService.opret(request);
 
         // Assert
-        assertResponseFEJL(result, OpretReviewResponseDto.StatusSubKode.UKENDT_BOG);
+        assertResponseFEJL(result, ResponseDto.StatusKode.INPUT_FEJL, OpretReviewResponseDto.StatusSubKode.UKENDT_BOG);
         verify(reviewRepository, times(0)).save(any());
     }
 
@@ -85,7 +85,7 @@ class ReviewWriterServiceTest {
         OpretReviewResponseDto result = reviewWriterService.opret(request);
 
         // Assert
-        assertResponseFEJL(result, OpretReviewResponseDto.StatusSubKode.UGYLDIG_SCORE);
+        assertResponseFEJL(result, ResponseDto.StatusKode.INPUT_FEJL, OpretReviewResponseDto.StatusSubKode.UGYLDIG_SCORE);
         verify(reviewRepository, times(0)).save(any());
     }
 
@@ -98,8 +98,21 @@ class ReviewWriterServiceTest {
         OpretReviewResponseDto result = reviewWriterService.opret(request);
 
         // Assert
-        assertResponseFEJL(result, OpretReviewResponseDto.StatusSubKode.UGYLDIG_SCORE);
+        assertResponseFEJL(result, ResponseDto.StatusKode.INPUT_FEJL, OpretReviewResponseDto.StatusSubKode.UGYLDIG_SCORE);
         verify(reviewRepository, times(0)).save(any());
+    }
+
+    @Test
+    void exceptionUnderOprettelse() {
+        // Arrange
+        when(reviewRepository.save(any()))
+                .thenThrow(new RuntimeException("Boom!"));
+
+        // Act
+        OpretReviewResponseDto result = reviewWriterService.opret(request);
+
+        // Assert
+        assertResponseFEJL(result, ResponseDto.StatusKode.TEKNISK_FEJL, OpretReviewResponseDto.StatusSubKode.EXCEPTION_THROWN);
     }
 
     private Review getSavedReview() {
@@ -115,9 +128,9 @@ class ReviewWriterServiceTest {
         assertNotNull(result.getReviewId());
     }
 
-    private void assertResponseFEJL(OpretReviewResponseDto result, OpretReviewResponseDto.StatusSubKode subKode) {
+    private void assertResponseFEJL(OpretReviewResponseDto result, ResponseDto.StatusKode statusKode, OpretReviewResponseDto.StatusSubKode subKode) {
         assertNotNull(result);
-        assertEquals(ResponseDto.StatusKode.FEJL, result.getStatusKode());
+        assertEquals(statusKode, result.getStatusKode());
         assertEquals(subKode, result.getStatusSubKode());
         assertNotNull(result.getFejlBeskrivelse());
         assertNull(result.getReviewId());
