@@ -10,8 +10,8 @@ public class OpretBogResponseDto extends ResponseDto {
     private String bogId;
 
     @Builder
-    public OpretBogResponseDto(StatusKode statusKode, String fejlBeskrivelse, StatusSubKode statusSubKode, String bogId) {
-        super(statusKode, fejlBeskrivelse);
+    public OpretBogResponseDto(StatusKode statusKode, String fejlBeskrivelse, String transaktionsId, StatusSubKode statusSubKode, String bogId) {
+        super(statusKode, fejlBeskrivelse, transaktionsId);
         this.statusSubKode = statusSubKode;
         this.bogId = bogId;
     }

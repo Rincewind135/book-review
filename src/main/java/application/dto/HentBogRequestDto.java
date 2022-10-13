@@ -4,10 +4,12 @@ import lombok.*;
 
 @Getter
 @Setter
-@Data
-@Builder
-@RequiredArgsConstructor
-@AllArgsConstructor
-public class HentBogRequestDto {
+public class HentBogRequestDto extends RequestDto {
     private String titel;
+
+    @Builder
+    public HentBogRequestDto(String transaktionsId, String titel) {
+        super(transaktionsId);
+        this.titel = titel;
+    }
 }

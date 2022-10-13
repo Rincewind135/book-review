@@ -4,10 +4,12 @@ import lombok.*;
 
 @Getter
 @Setter
-@Data
-@Builder
-@RequiredArgsConstructor
-@AllArgsConstructor
-public class HentReviewRequestDto {
+public class HentReviewRequestDto extends RequestDto {
     private String reviewId;
+
+    @Builder
+    public HentReviewRequestDto(String transaktionsId, String reviewId) {
+        super(transaktionsId);
+        this.reviewId = reviewId;
+    }
 }

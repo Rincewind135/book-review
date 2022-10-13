@@ -10,8 +10,8 @@ public class OpretReviewResponseDto extends ResponseDto {
     private String reviewId;
 
     @Builder
-    public OpretReviewResponseDto(StatusKode statusKode, String fejlBeskrivelse, StatusSubKode statusSubKode, String reviewId) {
-        super(statusKode, fejlBeskrivelse);
+    public OpretReviewResponseDto(StatusKode statusKode, String fejlBeskrivelse, String transaktionsId, StatusSubKode statusSubKode, String reviewId) {
+        super(statusKode, fejlBeskrivelse, transaktionsId);
         this.statusSubKode = statusSubKode;
         this.reviewId = reviewId;
     }

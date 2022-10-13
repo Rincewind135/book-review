@@ -17,24 +17,33 @@ public class BogReaderService {
     private final BogRepository bogRepository;
 
     public HentBogResponseDto hent(HentBogRequestDto requestDto) {
+        try {
+            return hentHvisEksisterer(requestDto);
+        } catch (Exception e) {
+            return tekniskFejl(requestDto, e);
+        }
+    }
+
+    private HentBogResponseDto hentHvisEksisterer(HentBogRequestDto requestDto) {
         Optional<Bog> bogOptional = findBogByTitel(requestDto.getTitel());
 
         if (bogOptional.isPresent()) {
             Bog bog = bogOptional.get();
-            return bogErHentet(bog);
+            return mapBogTilDto(requestDto, bog);
         } else {
             return fejlUkendtBog(requestDto);
         }
 
     }
 
-    private static HentBogResponseDto bogErHentet(Bog bog) {
+    private static HentBogResponseDto mapBogTilDto(HentBogRequestDto requestDto, Bog bog) {
         return HentBogResponseDto.builder()
                 .statusKode(ResponseDto.StatusKode.OK)
                 .titel(bog.getTitel())
                 .forfatter(bog.getForfatter())
                 .blurb(bog.getBlurb())
                 .bogId(bog.getId())
+                .transaktionsId(requestDto.getTransaktionsId())
                 .build();
     }
 
@@ -43,6 +52,7 @@ public class BogReaderService {
                 .statusKode(ResponseDto.StatusKode.INPUT_FEJL)
                 .statusSubKode(HentBogResponseDto.StatusSubKode.UKENDT_BOG)
                 .fejlBeskrivelse("Kunne ikke finde en bog med titel " + requestDto.getTitel())
+                .transaktionsId(requestDto.getTransaktionsId())
                 .build();
     }
 
@@ -52,5 +62,14 @@ public class BogReaderService {
 
     public Optional<Bog> findBogById(String id) {
         return bogRepository.findBogById(id);
+    }
+
+    private HentBogResponseDto tekniskFejl(HentBogRequestDto requestDto, Exception e) {
+        return HentBogResponseDto.builder()
+                .statusKode(ResponseDto.StatusKode.TEKNISK_FEJL)
+                .statusSubKode(HentBogResponseDto.StatusSubKode.EXCEPTION_THROWN)
+                .fejlBeskrivelse(e.getMessage())
+                .transaktionsId(requestDto.getTransaktionsId())
+                .build();
     }
 }

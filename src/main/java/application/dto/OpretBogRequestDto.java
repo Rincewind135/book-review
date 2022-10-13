@@ -4,12 +4,16 @@ import lombok.*;
 
 @Getter
 @Setter
-@Data
-@Builder
-@RequiredArgsConstructor
-@AllArgsConstructor
-public class OpretBogRequestDto {
+public class OpretBogRequestDto extends RequestDto {
     private String titel;
     private String forfatter;
     private String blurb;
+
+    @Builder
+    public OpretBogRequestDto(String transaktionsId, String titel, String forfatter, String blurb) {
+        super(transaktionsId);
+        this.titel = titel;
+        this.forfatter = forfatter;
+        this.blurb = blurb;
+    }
 }

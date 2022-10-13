@@ -13,8 +13,8 @@ public class HentBogResponseDto extends ResponseDto {
     private String blurb;
 
     @Builder
-    public HentBogResponseDto(StatusKode statusKode, String fejlBeskrivelse, StatusSubKode statusSubKode, String bogId, String titel, String forfatter, String blurb) {
-        super(statusKode, fejlBeskrivelse);
+    public HentBogResponseDto(StatusKode statusKode, String fejlBeskrivelse, String transaktionsId, StatusSubKode statusSubKode, String bogId, String titel, String forfatter, String blurb) {
+        super(statusKode, fejlBeskrivelse, transaktionsId);
         this.statusSubKode = statusSubKode;
         this.bogId = bogId;
         this.titel = titel;
@@ -23,6 +23,7 @@ public class HentBogResponseDto extends ResponseDto {
     }
 
     public enum StatusSubKode {
-        UKENDT_BOG
+        UKENDT_BOG,
+        EXCEPTION_THROWN
     }
 }

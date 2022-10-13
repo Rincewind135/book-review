@@ -2,8 +2,10 @@ package application.dto;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class HentReviewResponseDto extends ResponseDto {
     private StatusSubKode statusSubKode;
 
@@ -14,8 +16,8 @@ public class HentReviewResponseDto extends ResponseDto {
     private String beskrivelse;
 
     @Builder
-    public HentReviewResponseDto(StatusKode statusKode, String fejlBeskrivelse, StatusSubKode statusSubKode, String reviewId, String bogId, int score, String reviewForfatter, String beskrivelse) {
-        super(statusKode, fejlBeskrivelse);
+    public HentReviewResponseDto(StatusKode statusKode, String fejlBeskrivelse, String transaktionsId, StatusSubKode statusSubKode, String reviewId, String bogId, int score, String reviewForfatter, String beskrivelse) {
+        super(statusKode, fejlBeskrivelse, transaktionsId);
         this.statusSubKode = statusSubKode;
         this.reviewId = reviewId;
         this.bogId = bogId;
@@ -26,5 +28,6 @@ public class HentReviewResponseDto extends ResponseDto {
 
     public enum StatusSubKode {
         UKENDT_REVIEW
+        ,EXCEPTION_THROWN
     }
 }

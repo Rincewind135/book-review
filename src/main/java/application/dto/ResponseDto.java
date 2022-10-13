@@ -5,9 +5,10 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-abstract public class ResponseDto {
+public class ResponseDto {
     private StatusKode statusKode;
     private String fejlBeskrivelse;
+    private String transaktionsId;
 
     public enum StatusKode {
         OK
