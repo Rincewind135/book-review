@@ -28,8 +28,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ReviewControllerTest {
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private ReviewController reviewController;
 
     @MockBean
     private BogReaderService bogReaderService;
@@ -102,6 +100,37 @@ class ReviewControllerTest {
         when(reviewWriterService.opret(any())).thenReturn(OpretReviewResponseDto.builder().statusKode(ResponseDto.StatusKode.TEKNISK_FEJL).build());
         OpretReviewRequestDto requestDto = newOpretReviewRequestDto();
         kaldOpretReviewEndpoint(requestDto, status().isInternalServerError());
+    }
+
+    @Test
+    void hentValidererInput() throws Exception {
+        HentReviewRequestDto requestDto;
+
+        requestDto = newHentReviewRequestDto();
+        requestDto.setReviewId(null);
+        kaldHentReviewEndpoint(requestDto, status().isBadRequest());
+
+        requestDto = newHentReviewRequestDto();
+        requestDto.setReviewId(requestDto.getReviewId().substring(1));
+        kaldHentReviewEndpoint(requestDto, status().isBadRequest());
+
+        requestDto = newHentReviewRequestDto();
+        requestDto.setReviewId(requestDto.getReviewId() + "x");
+        kaldHentReviewEndpoint(requestDto, status().isBadRequest());
+    }
+
+    @Test
+    void readerServiceBrokkerSigOverInput() throws Exception {
+        when(reviewReaderService.hent(any())).thenReturn(HentReviewResponseDto.builder().statusKode(ResponseDto.StatusKode.INPUT_FEJL).build());
+        HentReviewRequestDto requestDto = newHentReviewRequestDto();
+        kaldHentReviewEndpoint(requestDto, status().isBadRequest());
+    }
+
+    @Test
+    void readerServiceFejler() throws Exception {
+        when(reviewReaderService.hent(any())).thenReturn(HentReviewResponseDto.builder().statusKode(ResponseDto.StatusKode.TEKNISK_FEJL).build());
+        HentReviewRequestDto requestDto = newHentReviewRequestDto();
+        kaldHentReviewEndpoint(requestDto, status().isInternalServerError());
     }
 
     private static OpretReviewRequestDto newOpretReviewRequestDto() {
