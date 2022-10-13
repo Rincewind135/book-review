@@ -1,6 +1,6 @@
 package application.service;
 
-import application.DtoTestUtil;
+import application.util.DtoTestUtil;
 import application.dto.OpretBogRequestDto;
 import application.dto.OpretBogResponseDto;
 import application.dto.ResponseDto;

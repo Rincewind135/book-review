@@ -1,14 +1,17 @@
 package application.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
-@AllArgsConstructor
+@Setter
 public class ResponseDto {
     private StatusKode statusKode;
     private String fejlBeskrivelse;
     private String transaktionsId;
+
+    public ResponseDto() {
+    }
 
     public enum StatusKode {
         OK

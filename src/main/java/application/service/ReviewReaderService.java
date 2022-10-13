@@ -40,32 +40,33 @@ public class ReviewReaderService {
     }
 
     private HentReviewResponseDto mapReviewTilDto(HentReviewRequestDto requestDto, Review review) {
-        return HentReviewResponseDto.builder()
-                .statusKode(ResponseDto.StatusKode.OK)
-                .reviewForfatter(review.getReviewForfatter())
-                .beskrivelse(review.getBeskrivelse())
-                .score(review.getScore())
-                .reviewId(review.getId())
-                .bogId(review.getBog().getId())
-                .transaktionsId(requestDto.getTransaktionsId())
-                .build();
+        HentReviewResponseDto responseDto = new HentReviewResponseDto();
+
+        responseDto.setStatusKode(ResponseDto.StatusKode.OK);
+        responseDto.setReviewForfatter(review.getReviewForfatter());
+        responseDto.setBeskrivelse(review.getBeskrivelse());
+        responseDto.setScore(review.getScore());
+        responseDto.setReviewId(review.getId());
+        responseDto.setBogId(review.getBog().getId());
+        responseDto.setTransaktionsId(requestDto.getTransaktionsId());
+        return responseDto;
     }
 
     private HentReviewResponseDto fejlUkendtReview(HentReviewRequestDto requestDto) {
-        return HentReviewResponseDto.builder()
-                .statusKode(ResponseDto.StatusKode.INPUT_FEJL)
-                .statusSubKode(HentReviewResponseDto.StatusSubKode.UKENDT_REVIEW)
-                .fejlBeskrivelse("Kunne ikke finde en review med ID " + requestDto.getReviewId())
-                .transaktionsId(requestDto.getTransaktionsId())
-                .build();
+        HentReviewResponseDto responseDto = new HentReviewResponseDto();
+        responseDto.setStatusKode(ResponseDto.StatusKode.INPUT_FEJL);
+        responseDto.setStatusSubKode(HentReviewResponseDto.StatusSubKode.UKENDT_REVIEW);
+        responseDto.setFejlBeskrivelse("Kunne ikke finde en review med ID " + requestDto.getReviewId());
+        responseDto.setTransaktionsId(requestDto.getTransaktionsId());
+        return responseDto;
     }
 
     private HentReviewResponseDto tekniskFejl(HentReviewRequestDto requestDto, Exception e) {
-        return HentReviewResponseDto.builder()
-                .statusKode(ResponseDto.StatusKode.TEKNISK_FEJL)
-                .statusSubKode(HentReviewResponseDto.StatusSubKode.EXCEPTION_THROWN)
-                .fejlBeskrivelse(e.getMessage())
-                .transaktionsId(requestDto.getTransaktionsId())
-                .build();
+        HentReviewResponseDto responseDto = new HentReviewResponseDto();
+        responseDto.setStatusKode(ResponseDto.StatusKode.TEKNISK_FEJL);
+        responseDto.setStatusSubKode(HentReviewResponseDto.StatusSubKode.EXCEPTION_THROWN);
+        responseDto.setFejlBeskrivelse(e.getMessage());
+        responseDto.setTransaktionsId(requestDto.getTransaktionsId());
+        return responseDto;
     }
 }

@@ -1,6 +1,6 @@
 package application.controller;
 
-import application.DtoTestUtil;
+import application.util.DtoTestUtil;
 import application.dto.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
@@ -58,14 +58,14 @@ class ReviewControllerTest extends AbstractControllerTest {
 
     @Test
     void writerServiceBrokkerSigOverInput() throws Exception {
-        when(reviewWriterService.opret(any())).thenReturn(OpretReviewResponseDto.builder().statusKode(ResponseDto.StatusKode.INPUT_FEJL).build());
+        when(reviewWriterService.opret(any())).thenReturn(DtoTestUtil.newOpretReviewResponseDto(ResponseDto.StatusKode.INPUT_FEJL));
         OpretReviewRequestDto requestDto = DtoTestUtil.newOpretReviewRequestDto();
         kaldOpretReviewEndpoint(requestDto, status().isBadRequest());
     }
 
     @Test
     void writerServiceFejler() throws Exception {
-        when(reviewWriterService.opret(any())).thenReturn(OpretReviewResponseDto.builder().statusKode(ResponseDto.StatusKode.TEKNISK_FEJL).build());
+        when(reviewWriterService.opret(any())).thenReturn(DtoTestUtil.newOpretReviewResponseDto(ResponseDto.StatusKode.TEKNISK_FEJL));
         OpretReviewRequestDto requestDto = DtoTestUtil.newOpretReviewRequestDto();
         kaldOpretReviewEndpoint(requestDto, status().isInternalServerError());
     }
@@ -89,14 +89,14 @@ class ReviewControllerTest extends AbstractControllerTest {
 
     @Test
     void readerServiceBrokkerSigOverInput() throws Exception {
-        when(reviewReaderService.hent(any())).thenReturn(HentReviewResponseDto.builder().statusKode(ResponseDto.StatusKode.INPUT_FEJL).build());
+        when(reviewReaderService.hent(any())).thenReturn(DtoTestUtil.newHentReviewResponseDto(ResponseDto.StatusKode.INPUT_FEJL));
         HentReviewRequestDto requestDto = DtoTestUtil.newHentReviewRequestDto();
         kaldHentReviewEndpoint(requestDto, status().isBadRequest());
     }
 
     @Test
     void readerServiceFejler() throws Exception {
-        when(reviewReaderService.hent(any())).thenReturn(HentReviewResponseDto.builder().statusKode(ResponseDto.StatusKode.TEKNISK_FEJL).build());
+        when(reviewReaderService.hent(any())).thenReturn(DtoTestUtil.newHentReviewResponseDto(ResponseDto.StatusKode.TEKNISK_FEJL));
         HentReviewRequestDto requestDto = DtoTestUtil.newHentReviewRequestDto();
         kaldHentReviewEndpoint(requestDto, status().isInternalServerError());
     }

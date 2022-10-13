@@ -5,7 +5,8 @@ import application.service.BogReaderService;
 import application.service.BogWriterService;
 import application.service.ReviewReaderService;
 import application.service.ReviewWriterService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import application.util.DtoTestUtil;
+import application.util.WebTestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -14,8 +15,6 @@ import org.springframework.test.web.servlet.ResultMatcher;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 public abstract class AbstractControllerTest {
     @Autowired
@@ -32,44 +31,36 @@ public abstract class AbstractControllerTest {
 
     @BeforeEach
     void setUp() {
-        when(reviewWriterService.opret(any())).thenReturn(OpretReviewResponseDto.builder().statusKode(ResponseDto.StatusKode.OK).build());
-        when(reviewReaderService.hent(any())).thenReturn(HentReviewResponseDto.builder().statusKode(ResponseDto.StatusKode.OK).build());
-        when(bogWriterService.opret(any())).thenReturn(OpretBogResponseDto.builder().statusKode(ResponseDto.StatusKode.OK).build());
-        when(bogReaderService.hent(any())).thenReturn(HentBogResponseDto.builder().statusKode(ResponseDto.StatusKode.OK).build());
-    }
-    public static String asJsonString(final Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        OpretReviewResponseDto opretReviewResponseDto = DtoTestUtil.newOpretReviewResponseDto(ResponseDto.StatusKode.OK);
+        when(reviewWriterService.opret(any())).thenReturn(opretReviewResponseDto);
+
+        HentReviewResponseDto hentReviewResponseDto = DtoTestUtil.newHentReviewResponseDto(ResponseDto.StatusKode.OK);
+        when(reviewReaderService.hent(any())).thenReturn(hentReviewResponseDto);
+
+        OpretBogResponseDto opretBogResponseDto = DtoTestUtil.newOpretBogResponseDto(ResponseDto.StatusKode.OK);
+        when(bogWriterService.opret(any())).thenReturn(opretBogResponseDto);
+
+        HentBogResponseDto hentBogResponseDto = DtoTestUtil.newHentBogResponseDto(ResponseDto.StatusKode.OK);
+        when(bogReaderService.hent(any())).thenReturn(hentBogResponseDto);
     }
 
     public void kaldOpretBogEndpoint(OpretBogRequestDto requestDto, ResultMatcher expectedResult) throws Exception {
-        mockMvc.perform(post("/bog/opret")
-                        .contentType("application/json")
-                        .content(asJsonString(requestDto)))
+        WebTestUtil.kaldOpretBogEndpoint(mockMvc, requestDto)
                 .andExpect(expectedResult);
     }
 
     public void kaldHentBogEndpoint(HentBogRequestDto requestDto, ResultMatcher expectedResult) throws Exception {
-        mockMvc.perform(get("/bog/hent")
-                        .contentType("application/json")
-                        .content(asJsonString(requestDto)))
+        WebTestUtil.kaldHentBogEndpoint(mockMvc, requestDto)
                 .andExpect(expectedResult);
     }
 
     public void kaldOpretReviewEndpoint(OpretReviewRequestDto requestDto, ResultMatcher expectedResult) throws Exception {
-        mockMvc.perform(post("/review/opret")
-                        .contentType("application/json")
-                        .content(asJsonString(requestDto)))
+        WebTestUtil.kaldOpretReviewEndpoint(mockMvc, requestDto)
                 .andExpect(expectedResult);
     }
 
     public void kaldHentReviewEndpoint(HentReviewRequestDto requestDto, ResultMatcher expectedResult) throws Exception {
-        mockMvc.perform(get("/review/hent")
-                        .contentType("application/json")
-                        .content(asJsonString(requestDto)))
+        WebTestUtil.kaldHentReviewEndpoint(mockMvc, requestDto)
                 .andExpect(expectedResult);
     }
 }

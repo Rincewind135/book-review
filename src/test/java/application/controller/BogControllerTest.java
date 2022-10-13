@@ -1,6 +1,6 @@
 package application.controller;
 
-import application.DtoTestUtil;
+import application.util.DtoTestUtil;
 import application.dto.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
@@ -42,14 +42,14 @@ class BogControllerTest extends AbstractControllerTest {
 
     @Test
     void writerServiceBrokkerSigOverInput() throws Exception {
-        when(bogWriterService.opret(any())).thenReturn(OpretBogResponseDto.builder().statusKode(ResponseDto.StatusKode.INPUT_FEJL).build());
+        when(bogWriterService.opret(any())).thenReturn(DtoTestUtil.newOpretBogResponseDto(ResponseDto.StatusKode.INPUT_FEJL));
         OpretBogRequestDto requestDto = DtoTestUtil.newOpretBogRequestDto();
         kaldOpretBogEndpoint(requestDto, status().isBadRequest());
     }
 
     @Test
     void writerServiceFejler() throws Exception {
-        when(bogWriterService.opret(any())).thenReturn(OpretBogResponseDto.builder().statusKode(ResponseDto.StatusKode.TEKNISK_FEJL).build());
+        when(bogWriterService.opret(any())).thenReturn(DtoTestUtil.newOpretBogResponseDto(ResponseDto.StatusKode.TEKNISK_FEJL));
         OpretBogRequestDto requestDto = DtoTestUtil.newOpretBogRequestDto();
         kaldOpretBogEndpoint(requestDto, status().isInternalServerError());
     }
@@ -65,14 +65,14 @@ class BogControllerTest extends AbstractControllerTest {
 
     @Test
     void readerServiceBrokkerSigOverInput() throws Exception {
-        when(bogReaderService.hent(any())).thenReturn(HentBogResponseDto.builder().statusKode(ResponseDto.StatusKode.INPUT_FEJL).build());
+        when(bogReaderService.hent(any())).thenReturn(DtoTestUtil.newHentBogResponseDto(ResponseDto.StatusKode.INPUT_FEJL));
         HentBogRequestDto requestDto = DtoTestUtil.newHentBogRequestDto();
         kaldHentBogEndpoint(requestDto, status().isBadRequest());
     }
 
     @Test
     void readerServiceFejler() throws Exception {
-        when(bogReaderService.hent(any())).thenReturn(HentBogResponseDto.builder().statusKode(ResponseDto.StatusKode.TEKNISK_FEJL).build());
+        when(bogReaderService.hent(any())).thenReturn(DtoTestUtil.newHentBogResponseDto(ResponseDto.StatusKode.TEKNISK_FEJL));
         HentBogRequestDto requestDto = DtoTestUtil.newHentBogRequestDto();
         kaldHentBogEndpoint(requestDto, status().isInternalServerError());
     }

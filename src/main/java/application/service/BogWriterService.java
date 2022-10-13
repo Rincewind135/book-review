@@ -36,11 +36,11 @@ public class BogWriterService {
     }
 
     private static OpretBogResponseDto bogErOprettetOkay(OpretBogRequestDto requestDto, Bog bog) {
-        return OpretBogResponseDto.builder()
-                .bogId(bog.getId())
-                .statusKode(ResponseDto.StatusKode.OK)
-                .transaktionsId(requestDto.getTransaktionsId())
-                .build();
+        OpretBogResponseDto responseDto = new OpretBogResponseDto();
+        responseDto.setBogId(bog.getId());
+        responseDto.setStatusKode(ResponseDto.StatusKode.OK);
+        responseDto.setTransaktionsId(requestDto.getTransaktionsId());
+        return responseDto;
     }
 
     private Optional<OpretBogResponseDto> validerInput(OpretBogRequestDto requestDto) {
@@ -52,14 +52,12 @@ public class BogWriterService {
     }
 
     private Optional<OpretBogResponseDto> fejlBogFindesAllerede(OpretBogRequestDto requestDto) {
-        return Optional.of(
-                OpretBogResponseDto.builder()
-                        .statusKode(ResponseDto.StatusKode.INPUT_FEJL)
-                        .statusSubKode(OpretBogResponseDto.StatusSubKode.BOG_FINDES_ALLEREDE)
-                        .fejlBeskrivelse("Bogen med titel " + requestDto.getTitel() + " er allerede oprettet")
-                        .transaktionsId(requestDto.getTransaktionsId())
-                        .build()
-        );
+        OpretBogResponseDto responseDto = new OpretBogResponseDto();
+        responseDto.setStatusKode(ResponseDto.StatusKode.INPUT_FEJL);
+        responseDto.setStatusSubKode(OpretBogResponseDto.StatusSubKode.BOG_FINDES_ALLEREDE);
+        responseDto.setFejlBeskrivelse("Bogen med titel " + requestDto.getTitel() + " er allerede oprettet");
+        responseDto.setTransaktionsId(requestDto.getTransaktionsId());
+        return Optional.of(responseDto);
     }
 
     private Bog opretBog(OpretBogRequestDto requestDto) {
@@ -72,12 +70,11 @@ public class BogWriterService {
     }
 
     private OpretBogResponseDto tekniskFejl(OpretBogRequestDto requestDto, Exception e) {
-        return OpretBogResponseDto.builder()
-                .statusKode(ResponseDto.StatusKode.TEKNISK_FEJL)
-                .statusSubKode(OpretBogResponseDto.StatusSubKode.EXCEPTION_THROWN)
-                .fejlBeskrivelse(e.getMessage())
-                .transaktionsId(requestDto.getTransaktionsId())
-                .build();
-
+        OpretBogResponseDto responseDto = new OpretBogResponseDto();
+        responseDto.setStatusKode(ResponseDto.StatusKode.TEKNISK_FEJL);
+        responseDto.setStatusSubKode(OpretBogResponseDto.StatusSubKode.EXCEPTION_THROWN);
+        responseDto.setFejlBeskrivelse("Bogen med titel " + requestDto.getTitel() + " er allerede oprettet");
+        responseDto.setTransaktionsId(requestDto.getTransaktionsId());
+        return responseDto;
     }
 }

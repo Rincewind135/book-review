@@ -1,19 +1,17 @@
 package application.dto;
 
-import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class OpretBogResponseDto extends ResponseDto {
     private StatusSubKode statusSubKode;
 
     private String bogId;
 
-    @Builder
-    public OpretBogResponseDto(StatusKode statusKode, String fejlBeskrivelse, String transaktionsId, StatusSubKode statusSubKode, String bogId) {
-        super(statusKode, fejlBeskrivelse, transaktionsId);
-        this.statusSubKode = statusSubKode;
-        this.bogId = bogId;
+    public OpretBogResponseDto() {
+        super();
     }
 
     public enum StatusSubKode {

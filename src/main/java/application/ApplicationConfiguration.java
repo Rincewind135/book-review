@@ -27,6 +27,6 @@ public class ApplicationConfiguration extends SpringBootServletInitializer {
 
     @Bean
     public ServletWebServerFactory servletWebServerFactory() {
-        return new TomcatServletWebServerFactory();
+        return new TomcatServletWebServerFactory(0);
     }
 }

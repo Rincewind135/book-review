@@ -1,6 +1,6 @@
 package application.service;
 
-import application.DtoTestUtil;
+import application.util.DtoTestUtil;
 import application.dto.OpretReviewRequestDto;
 import application.dto.OpretReviewResponseDto;
 import application.dto.ResponseDto;

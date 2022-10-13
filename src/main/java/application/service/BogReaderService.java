@@ -37,23 +37,23 @@ public class BogReaderService {
     }
 
     private static HentBogResponseDto mapBogTilDto(HentBogRequestDto requestDto, Bog bog) {
-        return HentBogResponseDto.builder()
-                .statusKode(ResponseDto.StatusKode.OK)
-                .titel(bog.getTitel())
-                .forfatter(bog.getForfatter())
-                .blurb(bog.getBlurb())
-                .bogId(bog.getId())
-                .transaktionsId(requestDto.getTransaktionsId())
-                .build();
+        HentBogResponseDto responseDto = new HentBogResponseDto();
+        responseDto.setStatusKode(ResponseDto.StatusKode.OK);
+        responseDto.setTitel(bog.getTitel());
+        responseDto.setForfatter(bog.getForfatter());
+        responseDto.setBlurb(bog.getBlurb());
+        responseDto.setBogId(bog.getId());
+        responseDto.setTransaktionsId(requestDto.getTransaktionsId());
+                return responseDto;
     }
 
     private static HentBogResponseDto fejlUkendtBog(HentBogRequestDto requestDto) {
-        return HentBogResponseDto.builder()
-                .statusKode(ResponseDto.StatusKode.INPUT_FEJL)
-                .statusSubKode(HentBogResponseDto.StatusSubKode.UKENDT_BOG)
-                .fejlBeskrivelse("Kunne ikke finde en bog med titel " + requestDto.getTitel())
-                .transaktionsId(requestDto.getTransaktionsId())
-                .build();
+        HentBogResponseDto responseDto = new HentBogResponseDto();
+        responseDto.setStatusKode(ResponseDto.StatusKode.INPUT_FEJL);
+        responseDto.setStatusSubKode(HentBogResponseDto.StatusSubKode.UKENDT_BOG);
+        responseDto.setFejlBeskrivelse("Kunne ikke finde en bog med titel " + requestDto.getTitel());
+        responseDto.setTransaktionsId(requestDto.getTransaktionsId());
+        return responseDto;
     }
 
     public Optional<Bog> findBogByTitel(String titel) {
@@ -65,11 +65,11 @@ public class BogReaderService {
     }
 
     private HentBogResponseDto tekniskFejl(HentBogRequestDto requestDto, Exception e) {
-        return HentBogResponseDto.builder()
-                .statusKode(ResponseDto.StatusKode.TEKNISK_FEJL)
-                .statusSubKode(HentBogResponseDto.StatusSubKode.EXCEPTION_THROWN)
-                .fejlBeskrivelse(e.getMessage())
-                .transaktionsId(requestDto.getTransaktionsId())
-                .build();
+        HentBogResponseDto responseDto = new HentBogResponseDto();
+        responseDto.setStatusKode(ResponseDto.StatusKode.TEKNISK_FEJL);
+        responseDto.setStatusSubKode(HentBogResponseDto.StatusSubKode.EXCEPTION_THROWN);
+        responseDto.setFejlBeskrivelse(e.getMessage());
+        responseDto.setTransaktionsId(requestDto.getTransaktionsId());
+        return responseDto;
     }
 }

@@ -1,9 +1,6 @@
-package application;
+package application.util;
 
-import application.dto.HentBogRequestDto;
-import application.dto.HentReviewRequestDto;
-import application.dto.OpretBogRequestDto;
-import application.dto.OpretReviewRequestDto;
+import application.dto.*;
 
 import java.util.UUID;
 
@@ -41,5 +38,29 @@ public class DtoTestUtil {
                 .titel("The Dark Tower")
                 .transaktionsId(UUID.randomUUID().toString())
                 .build();
+    }
+
+    public static OpretReviewResponseDto newOpretReviewResponseDto(ResponseDto.StatusKode ok) {
+        OpretReviewResponseDto responseDto = new OpretReviewResponseDto();
+        responseDto.setStatusKode(ok);
+        return responseDto;
+    }
+
+    public static HentReviewResponseDto newHentReviewResponseDto(ResponseDto.StatusKode ok) {
+        HentReviewResponseDto responseDto = new HentReviewResponseDto();
+        responseDto.setStatusKode(ok);
+        return responseDto;
+    }
+
+    public static OpretBogResponseDto newOpretBogResponseDto(ResponseDto.StatusKode ok) {
+        OpretBogResponseDto responseDto = new OpretBogResponseDto();
+        responseDto.setStatusKode(ok);
+        return responseDto;
+    }
+
+    public static HentBogResponseDto newHentBogResponseDto(ResponseDto.StatusKode ok) {
+        HentBogResponseDto responseDto = new HentBogResponseDto();
+        responseDto.setStatusKode(ok);
+        return responseDto;
     }
 }
