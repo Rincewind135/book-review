@@ -2,8 +2,14 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/book-review-backend/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/book-review-backend/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/book-review-backend/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/book-review-frontend/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/book-review-frontend/src/main/java/frontend/controller/HomeController.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/book-review-frontend/src/main/java/frontend/controller/IController.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/book-review-frontend/src/main/java/frontend/filter/FrontendFilter.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/book-review-frontend/src/main/java/frontend/mapping/ControllerMappings.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/book-review-frontend/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
   </component>
 </project>
